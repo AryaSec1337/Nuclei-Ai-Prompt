@@ -13,7 +13,7 @@ from rich.prompt import Prompt
 from rich.table import Table
 from rich import box
 from datetime import datetime
-os.makedirs("output-json", exist_ok=True)
+os.makedirs("output", exist_ok=True)
 
 console = Console()
 
@@ -120,6 +120,8 @@ for key, cat in categories.items():
 
 DOMAIN_REGEX = re.compile(r"^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$")
 
+VALID_SEVERITIES = {"low", "medium", "high", "critical"}
+
 def validate_domain(domain: str) -> bool:
     return bool(DOMAIN_REGEX.match(domain))
 
@@ -137,7 +139,6 @@ def parse_plain_output(output: str):
         issue, category, severity, url = match
         severity_clean = severity.strip().lower()
 
-        # Tambahkan pewarnaan
         if severity_clean == 'low':
             sev_color = f"[green]{severity.strip()}[/green]"
         elif severity_clean == 'medium':
@@ -153,10 +154,10 @@ def parse_plain_output(output: str):
             "Issue": issue.strip(),
             "Category": category.strip(),
             "Severity": sev_color,
+            "SeverityRaw": severity_clean,
             "URL": url.strip()
         })
     return results
-
 
 def log_results(file, data):
     with open(file, "a") as f:
@@ -170,7 +171,7 @@ def print_categories():
         table.add_row(k, v["name"])
     console.print(table)
 
-def scan(domain: str, selected: str):
+def scan(domain: str, selected: str, severity_filter: set):
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     logfile = f"scan_result_{timestamp}.log"
 
@@ -182,7 +183,7 @@ def scan(domain: str, selected: str):
 
         try:
             result = subprocess.run(
-                ["nuclei", "-target", domain, "-ai", prompt, "-silent", "-ut"],
+                ["nuclei", "-target", domain, "-ai", prompt, "-silent"],
                 capture_output=True,
                 text=True,
                 check=True
@@ -204,24 +205,26 @@ def scan(domain: str, selected: str):
                 issue = entry.get("templateID", "-")
                 value = entry.get("matcher-name") or (entry.get("extracted-results") or ["-"])[0]
                 category = entry.get("info", {}).get("Category", "-")
-                severity = entry.get("info", {}).get("Severity", "unknown")
+                severity = entry.get("info", {}).get("Severity", "unknown").lower()
                 url = entry.get("host") or entry.get("matched-at", "-")
+
+                if severity not in severity_filter:
+                    continue
 
                 block = f"✅ Kerentanan ditemukan:\nIssue     : {issue}\nCategory  : {category}\nSeverity  : {severity}\nURL       : {url}\n"
                 console.print(block)
                 log_results(logfile, block)
                 vuln_found = True
-            except json.JSONDecodeError as e:
-                console.print(f"[dim]Gagal decode JSON: {e}[/dim]")
+
+            except json.JSONDecodeError:
                 parsed = parse_plain_output(line)
-                if parsed:
-                    for item in parsed:
-                        block = f"✅ Kerentanan ditemukan:\nIssue     : {item.get('Issue', '-')}\nCategory  : {item.get('Category', '-')}\nSeverity  : {item.get('Severity', '-')}\nURL       : {item.get('URL', '-')}\n"
-                        console.print(block)
-                        log_results(logfile, block)
-                        vuln_found = True
-                else:
-                    console.print("[grey]Output tidak bisa diparse menjadi JSON maupun plaintext match.[/grey]")
+                for item in parsed:
+                    if item["SeverityRaw"] not in severity_filter:
+                        continue
+                    block = f"✅ Kerentanan ditemukan:\nIssue     : {item['Issue']}\nCategory  : {item['Category']}\nSeverity  : {item['Severity']}\nURL       : {item['URL']}\n"
+                    console.print(block)
+                    log_results(logfile, block)
+                    vuln_found = True
 
         if not vuln_found:
             console.print("[yellow]⛔ Tidak ditemukan kerentanan untuk prompt ini.[/yellow]")
@@ -256,11 +259,13 @@ def main():
         console.print("[bold red]Kategori tidak valid[/bold red]")
         sys.exit(1)
 
-    scan(domain, selected)
+    filter_input = Prompt.ask("Masukkan filter severity (low, medium, high, critical, pisah dengan koma)", default="low,medium,high,critical")
+    filter_set = set(s.strip().lower() for s in filter_input.split(",")) & VALID_SEVERITIES
+    if not filter_set:
+        console.print("[bold red]Filter tidak valid. Gunakan: low, medium, high, critical[/bold red]")
+        sys.exit(1)
 
-if __name__ == "__main__":
-    main()
-
+    scan(domain, selected, filter_set)
 
 if __name__ == "__main__":
     main()
