@@ -177,7 +177,7 @@ def scan(domain: str, selected: str):
 
         try:
             result = subprocess.run(
-                ["nuclei", "-target", domain, "-ai", prompt, "-silent"],
+                ["nuclei", "-target", domain, "-ai", prompt, "-silent", "-ut"],
                 capture_output=True,
                 text=True,
                 check=True
