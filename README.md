@@ -31,7 +31,9 @@ Kamu juga bisa memilih opsi **99** untuk melakukan scan di semua kategori sekali
 
 ## 🚀 Cara Penggunaan
 
-### 1.Setting Apikey Nuclei Cloud
+### 1.Setting Apikey Nuclei Cloud 
+✍️ Noted ‼️ : Bagi pengguna yang belom sama sekali setting apikey, Jika sudah maka tidak disarankan masukan lagi, ini hanya 1x setting , jika sudah maka tinggal jalankan tools seperti biasa
+
 Get Apikey di site resmi nuclei https://cloud.projectdiscovery.io/
 - Login
 - Profile
