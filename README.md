@@ -56,7 +56,7 @@ Ikuti instruksi pada CLI untuk:
 ```
 Issue     : sql-injection-basic
 Category  : SQL Injection
-Severity  : [bold red]critical[/bold red]
+Severity  : critical
 URL       : https://target.com/vuln.php?id=1
 ```
 📁 Output
