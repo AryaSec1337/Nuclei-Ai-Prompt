@@ -188,7 +188,7 @@ def scan(domain: str, selected: str):
 
         try:
             result = subprocess.run(
-                ["nuclei", "-target", domain, "-ai", prompt, "-silent", "-auth", NUCLEI_API_KEY, "-ut"],
+                ["nuclei", "-target", domain, "-ai", prompt, "-silent", "-sf", NUCLEI_API_KEY, "-ut"],
                 capture_output=True,
                 text=True,
                 check=True
