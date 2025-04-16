@@ -31,18 +31,25 @@ Kamu juga bisa memilih opsi **99** untuk melakukan scan di semua kategori sekali
 
 ## 🚀 Cara Penggunaan
 
-### 1. Install dependencies:
+### 1.Setting file .env
+Get Apikey di site resmi nuclei https://cloud.projectdiscovery.io/
+- Login
+- Profile
+- Apikey
+- Copy dan letakan di .env
+- 
+### 2. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Install Nuclei
+### 3. Install Nuclei
 ```
 go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
 ```
 
-### 3. Usage
+### 4. Usage
 ```
 python nuclei_prompt.py
 ```
