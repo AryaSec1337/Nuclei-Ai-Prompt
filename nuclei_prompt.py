@@ -1,6 +1,8 @@
 #Coded By AryaSec1337
 #Combintaion Tools
 
+# nuclei_scanner_prompted.py
+
 import re
 import subprocess
 import sys
@@ -11,22 +13,13 @@ from rich.prompt import Prompt
 from rich.table import Table
 from rich import box
 from datetime import datetime
-from dotenv import load_dotenv
-
-# Buat folder output jika belum ada
 os.makedirs("output-json", exist_ok=True)
-
-# Load .env jika tersedia
-load_dotenv()
-NUCLEI_API_KEY = os.getenv("PDCP_API_KEY")
 
 console = Console()
 
-if not NUCLEI_API_KEY:
-    console.print("[bold red]API Key Nuclei tidak ditemukan! Set PDCP_API_KEY di environment atau file .env[/bold red]")
-    sys.exit(1)
+# (categories dictionary tetap seperti sebelumnya)
+# (DOMAIN_REGEX, validate_domain, log_results, print_categories tetap sama)
 
-# --- Dictionary kategori ---
 categories = {
     "1": {"name": "Authentication Bypass", "prompts": [
         "Identify improperly configured OAuth authentication mechanisms.",
@@ -121,7 +114,6 @@ categories = {
     "99": {"name": "Scan Semua", "prompts": []}
 }
 
-# Gabungkan semua kategori ke 99 (semua)
 for key, cat in categories.items():
     if key != "99":
         categories["99"]["prompts"].extend(cat.get("prompts", []))
@@ -145,6 +137,7 @@ def parse_plain_output(output: str):
         issue, category, severity, url = match
         severity_clean = severity.strip().lower()
 
+        # Tambahkan pewarnaan
         if severity_clean == 'low':
             sev_color = f"[green]{severity.strip()}[/green]"
         elif severity_clean == 'medium':
@@ -163,6 +156,7 @@ def parse_plain_output(output: str):
             "URL": url.strip()
         })
     return results
+
 
 def log_results(file, data):
     with open(file, "a") as f:
@@ -188,7 +182,7 @@ def scan(domain: str, selected: str):
 
         try:
             result = subprocess.run(
-                ["nuclei", "-target", domain, "-ai", prompt, "-silent", "-sf", NUCLEI_API_KEY, "-ut"],
+                ["nuclei", "-target", domain, "-ai", prompt, "-silent", "-ut"],
                 capture_output=True,
                 text=True,
                 check=True
@@ -240,7 +234,7 @@ def main():
    / | / /_  _______/ /__  (_)  / __ \_________  ____ ___  ____  / /_
   /  |/ / / / / ___/ / _ \/ /  / /_/ / ___/ __ \/ __ `__ \/ __ \/ __/
  / /|  / /_/ / /__/ /  __/ /  / ____/ /  / /_/ / / / / / / /_/ / /_  
-/_/ |_|\__,_/\___/_/\___/_/  /_/   /_/   \____/_/ /_/ /_/ .___/\__/  
+/_/ |_/\__,_/\___/_/\___/_/  /_/   /_/   \____/_/ /_/ /_/ .___/\__/  
                                                        /_/           
     """
 
@@ -266,6 +260,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 if __name__ == "__main__":
     main()
