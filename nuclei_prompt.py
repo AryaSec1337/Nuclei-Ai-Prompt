@@ -189,7 +189,11 @@ def scan(domain: str, selected: str, severity_filter: set):
                 check=True
             )
         except subprocess.CalledProcessError as e:
-            console.print(f"[red]Error saat eksekusi nuclei (prompt {i}):[/red] {e.stderr}")
+            err = strip_ansi(e.stderr or "")
+            if "no templates provided" in err.lower():
+                console.print("[yellow]\u26d4 Tidak ada template yang cocok untuk prompt ini.[/yellow]")
+            else:
+                console.print(f"[red]Gagal menjalankan nuclei (prompt {i}):[/red] {err}")
             continue
 
         if not result.stdout.strip():
