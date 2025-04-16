@@ -31,13 +31,19 @@ Kamu juga bisa memilih opsi **99** untuk melakukan scan di semua kategori sekali
 
 ## 🚀 Cara Penggunaan
 
-### 1.Setting file .env
+### 1.Setting Apikey Nuclei Cloud
 Get Apikey di site resmi nuclei https://cloud.projectdiscovery.io/
 - Login
 - Profile
 - Apikey
-- Copy dan letakan di .env
-- 
+- Jalankan perintah
+  ```
+  nuclei -auth
+  ```
+  pada perintah [*] Enter PDCP API Key (exit to abort): <masukan apikey disini> , contoh berhasil dibawah
+  ![image](https://github.com/user-attachments/assets/dce90a4e-893a-448a-a39e-56620658b9f8)
+
+  
 ### 2. Install dependencies:
 
 ```bash
