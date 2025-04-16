@@ -1,5 +1,8 @@
 # 🔍 Nuclei Prompt Scanner
 
+![image](https://github.com/user-attachments/assets/87fe13e4-b488-4a32-9b78-733fbcc2ec57)
+
+
 **Nuclei Prompt Scanner** adalah tools berbasis Python yang memanfaatkan **Nuclei** dan **AI Prompting** untuk melakukan pemindaian kerentanan pada web target berdasarkan kategori OWASP dan lainnya, dengan antarmuka interaktif berbasis CLI (command-line).
 
 ## ✨ Fitur Utama
