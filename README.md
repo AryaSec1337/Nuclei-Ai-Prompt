@@ -43,7 +43,8 @@ Get Apikey di site resmi nuclei https://cloud.projectdiscovery.io/
   nuclei -auth
   ```
   pada perintah [*] Enter PDCP API Key (exit to abort): <masukan apikey disini> , contoh berhasil dibawah
-  ![image](https://github.com/user-attachments/assets/dce90a4e-893a-448a-a39e-56620658b9f8)
+![image](https://github.com/user-attachments/assets/3b909273-a117-4ec6-8043-bd6c6a2fe656)
+
 
   
 ### 2. Install dependencies:
